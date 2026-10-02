@@ -62,4 +62,7 @@ public class Listing {
     public Listing() {
 
     }
+
+    public Listing(String title, String description, String location, List<String> tags, String company, User user) {
+    }
 }

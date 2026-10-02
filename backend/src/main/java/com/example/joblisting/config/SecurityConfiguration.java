@@ -48,7 +48,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("https//backend.com", "https://localhost:8080"));
+        corsConfiguration.setAllowedOrigins(List.of("https://backend.com", "https://localhost:8080"));
         corsConfiguration.setAllowedMethods(List.of("GET", "PUT", "DELETE", "POST"));
         corsConfiguration.setAllowedHeaders(List.of("Authorization" , "Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

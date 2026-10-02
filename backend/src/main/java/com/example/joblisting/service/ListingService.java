@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ListingService {
 
-    Listing createListing(PostListingDto dto, Long userId);
+    Listing createListing(PostListingDto dto, String username);
 
     List<Listing> listListings();
 }

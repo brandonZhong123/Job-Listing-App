@@ -8,7 +8,7 @@ public record GetListingDto(
         String description,
         String location,
         List<String> tags,
-        String company,
-        Long userId
-) {
+        String company
+
+        ) {
 }
