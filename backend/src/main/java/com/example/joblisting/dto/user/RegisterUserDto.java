@@ -1,4 +1,4 @@
-package com.example.joblisting.dto;
+package com.example.joblisting.dto.user;
 
 public record RegisterUserDto (
         String username,

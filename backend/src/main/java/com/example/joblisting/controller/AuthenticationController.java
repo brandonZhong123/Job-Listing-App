@@ -1,8 +1,8 @@
 package com.example.joblisting.controller;
 
-import com.example.joblisting.dto.LoginUserDto;
-import com.example.joblisting.dto.RegisterUserDto;
-import com.example.joblisting.dto.VerifyUserDto;
+import com.example.joblisting.dto.user.LoginUserDto;
+import com.example.joblisting.dto.user.RegisterUserDto;
+import com.example.joblisting.dto.user.VerifyUserDto;
 import com.example.joblisting.model.User;
 import com.example.joblisting.response.LoginResponse;
 import com.example.joblisting.service.AuthenticationService;
