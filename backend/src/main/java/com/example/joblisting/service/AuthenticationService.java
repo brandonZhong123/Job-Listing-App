@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -53,7 +54,40 @@ public class AuthenticationService {
     }
 
     public void verifyUser(VerifyUserDto dto) {
+        Optional<User> optionalUser = userRepository.findByEmail(dto.email());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
+                throw new RuntimeException("Verification code has expired");
+            }
+            if (user.getVerificationCode().equals(dto.verificationCode())) {
+                user.setEnabled(true);
+                user.setVerificationCode(null);
+                user.setVerificationCodeExpiresAt(null);
+                userRepository.save(user);
+            } else {
+                throw new RuntimeException("Invalid verification code");
+            }
+        }
+        else {
+            throw new RuntimeException("User not found");
+        }
+    }
 
+    public void resendVerificationCode(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user.isEnabled()) {
+                throw new RuntimeException("Account is already verified");
+            }
+            user.setVerificationCode(generateVerificationCode());
+            user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
+            sendVerificationEmail(user);
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
 
     public String generateVerificationCode() {
@@ -81,11 +115,8 @@ public class AuthenticationService {
 
         try {
             emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
-        }catch(MessagingException e) {
+        } catch(MessagingException e) {
             e.printStackTrace();
         }
-
     }
-
-
 }
