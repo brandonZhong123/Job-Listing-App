@@ -8,5 +8,6 @@ public record PostListingDto(
         String location,
         List<String> tags,
         String company
+
 ) {
 }

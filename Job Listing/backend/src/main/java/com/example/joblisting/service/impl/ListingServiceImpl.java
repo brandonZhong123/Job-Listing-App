@@ -28,8 +28,9 @@ public class ListingServiceImpl implements ListingService {
 
 
     @Override
-    public Listing createListing(PostListingDto dto, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() ->new RuntimeException("User not found"));
+    public Listing createListing(PostListingDto dto, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         Listing listing = listingMapper.fromPostDto(dto, user);
         listingRepository.save(listing);
         return listing;
