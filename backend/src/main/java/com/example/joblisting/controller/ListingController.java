@@ -10,10 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.validation.Valid;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/listing")
@@ -32,6 +35,13 @@ public class ListingController {
         Listing listing = listingService.createListing(dto, authentication.getName());
         ListingResponse res = listingMapper.fromListing(listing);
         return new ResponseEntity<>(res, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ListingResponse>> getListings() {
+        List<Listing> lists = listingService.listListings();
+        List<ListingResponse> listingResponses = lists.stream().map(listingMapper::fromListing).toList();
+        return ResponseEntity.ok(listingResponses);
     }
 
 }
