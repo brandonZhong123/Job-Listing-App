@@ -48,7 +48,6 @@ public class Listing {
             String location,
             List<String> tags,
             String company,
-            LocalDateTime created,
             User user) {
         this.title = title;
         this.description = description;
@@ -56,13 +55,11 @@ public class Listing {
         this.tags = tags;
         this.company = company;
         this.user = user;
-        this.created = created;
+        this.created = LocalDateTime.now();
     }
 
     public Listing() {
 
     }
 
-    public Listing(String title, String description, String location, List<String> tags, String company, User user) {
-    }
 }
