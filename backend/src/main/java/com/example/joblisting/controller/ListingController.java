@@ -3,11 +3,13 @@ package com.example.joblisting.controller;
 import com.example.joblisting.dto.listing.PostListingDto;
 import com.example.joblisting.mapper.ListingMapper;
 import com.example.joblisting.model.Listing;
+import com.example.joblisting.model.User;
 import com.example.joblisting.response.ListingResponse;
 import com.example.joblisting.service.ListingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -27,8 +29,9 @@ public class ListingController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<ListingResponse> createListing(@Valid @RequestBody PostListingDto dto, Authentication authentication) {
-        Listing listing = listingService.createListing(dto, authentication.getName());
+    public ResponseEntity<ListingResponse> createListing(@Valid @RequestBody PostListingDto dto, @AuthenticationPrincipal User user) {
+        String email = user.getEmail();
+        Listing listing = listingService.createListing(dto, email);
         ListingResponse res = listingMapper.fromListing(listing);
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }

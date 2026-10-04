@@ -29,7 +29,7 @@ public class ListingServiceImpl implements ListingService {
 
     @Override
     public Listing createListing(PostListingDto dto, String email) {
-        User user = userRepository.findByUsername(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Listing listing = listingMapper.fromPostDto(dto, user);
         listingRepository.save(listing);
