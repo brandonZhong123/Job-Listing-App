@@ -3,17 +3,13 @@ package com.example.joblisting.controller;
 import com.example.joblisting.dto.listing.PostListingDto;
 import com.example.joblisting.mapper.ListingMapper;
 import com.example.joblisting.model.Listing;
-import com.example.joblisting.model.User;
 import com.example.joblisting.response.ListingResponse;
 import com.example.joblisting.service.ListingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -43,5 +39,15 @@ public class ListingController {
         List<ListingResponse> listingResponses = lists.stream().map(listingMapper::fromListing).toList();
         return ResponseEntity.ok(listingResponses);
     }
+
+    @GetMapping("/{listingId}")
+    public ResponseEntity<ListingResponse> listing(@PathVariable Long listingId) {
+        Listing listing = listingService.singleListing(listingId);
+        ListingResponse listingResponse = listingMapper.fromListing(listing);
+        return ResponseEntity.ok(listingResponse);
+    }
+
+
+
 
 }
