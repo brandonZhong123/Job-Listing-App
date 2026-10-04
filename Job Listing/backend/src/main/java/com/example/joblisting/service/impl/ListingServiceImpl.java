@@ -28,8 +28,8 @@ public class ListingServiceImpl implements ListingService {
 
 
     @Override
-    public Listing createListing(PostListingDto dto, String username) {
-        User user = userRepository.findByUsername(username)
+    public Listing createListing(PostListingDto dto, String email) {
+        User user = userRepository.findByUsername(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Listing listing = listingMapper.fromPostDto(dto, user);
         listingRepository.save(listing);
@@ -39,5 +39,11 @@ public class ListingServiceImpl implements ListingService {
     @Override
     public List<Listing> listListings() {
         return listingRepository.findAllByOrderByCreatedAsc();
+    }
+
+
+    @Override
+    public Listing singleListing(Long id) {
+        return listingRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

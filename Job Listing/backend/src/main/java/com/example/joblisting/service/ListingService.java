@@ -10,7 +10,9 @@ import java.util.List;
 
 public interface ListingService {
 
-    Listing createListing(PostListingDto dto, String username);
+    Listing createListing(PostListingDto dto, String email);
 
     List<Listing> listListings();
+
+    Listing singleListing(Long id);
 }
