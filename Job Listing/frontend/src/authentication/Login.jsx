@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,7 +37,7 @@ function Login() {
             localStorage.setItem("token", data.token);
 
             setError("");
-            console.log("Logged in!");
+            navigate("/listings")
         } catch (error) {
             setError("Could not connect to server");
         }

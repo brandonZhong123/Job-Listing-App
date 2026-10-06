@@ -31,7 +31,7 @@ function Verify() {
                 return;
             }
 
-            navigate("/login");
+            navigate("/listings");
 
         } catch (error) {
             setError("Could not connect to server");
