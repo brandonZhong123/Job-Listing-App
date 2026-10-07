@@ -1,10 +1,12 @@
 package com.example.joblisting.controller;
 
 import com.example.joblisting.dto.listing.PostListingDto;
+import com.example.joblisting.dto.listing.UpdateListingDto;
 import com.example.joblisting.mapper.ListingMapper;
 import com.example.joblisting.model.Listing;
 import com.example.joblisting.model.User;
 import com.example.joblisting.response.ListingResponse;
+import com.example.joblisting.response.UpdateListingResponse;
 import com.example.joblisting.service.ListingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +52,14 @@ public class ListingController {
         return ResponseEntity.ok(listingResponse);
     }
 
+    @PutMapping("/{listingId}")
+    public ResponseEntity<UpdateListingResponse> updateListing(
+            @PathVariable Long listingId,
+            @RequestBody UpdateListingDto dto) {
+        Listing listing = listingService.updateListing(listingId, dto);
+        UpdateListingResponse res = listingMapper.fromListingToUpdateListingResponse(listing);
+        return ResponseEntity.ok(res);
+    }
 
 
 

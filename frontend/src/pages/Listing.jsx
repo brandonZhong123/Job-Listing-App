@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 function Listings() {
     const [listings, setListings] = useState([]);
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -14,9 +16,15 @@ function Listings() {
             .then(response => response.json())
             .then(data => {
                 setListings(data);
-            });
+            }).finally(setLoading(false));
     }, []);
-
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+            </div>
+        );
+    }
     return (
         <div className="min-h-screen bg-gray-50">
             <main className="max-w-4xl mx-auto px-6 py-10">
