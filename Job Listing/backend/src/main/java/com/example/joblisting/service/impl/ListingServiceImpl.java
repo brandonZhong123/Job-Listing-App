@@ -1,14 +1,13 @@
 package com.example.joblisting.service.impl;
 
-import com.example.joblisting.dto.listing.GetListingDto;
 import com.example.joblisting.dto.listing.PostListingDto;
+import com.example.joblisting.dto.listing.UpdateListingDto;
 import com.example.joblisting.mapper.ListingMapper;
 import com.example.joblisting.model.Listing;
 import com.example.joblisting.model.User;
 import com.example.joblisting.repository.ListingRepository;
 import com.example.joblisting.repository.UserRepository;
 import com.example.joblisting.service.ListingService;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,5 +44,17 @@ public class ListingServiceImpl implements ListingService {
     @Override
     public Listing singleListing(Long id) {
         return listingRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+
+    @Override
+    public Listing updateListing(Long id, UpdateListingDto dto) {
+        Listing listing = listingRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        listing.setCompany(dto.company());
+        listing.setTags(dto.tags());
+        listing.setTitle(dto.title());
+        listing.setDescription(dto.title());
+        listing.setLocation(dto.location());
+        return listingRepository.save(listing);
     }
 }

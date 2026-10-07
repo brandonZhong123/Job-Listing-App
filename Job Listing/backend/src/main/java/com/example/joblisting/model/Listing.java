@@ -42,6 +42,7 @@ public class Listing {
     @Column(nullable = false, updatable = false)
     private LocalDateTime created;
 
+
     public Listing(
             String title,
             String description,

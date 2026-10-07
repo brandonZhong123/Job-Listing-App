@@ -4,6 +4,7 @@ import com.example.joblisting.dto.listing.PostListingDto;
 import com.example.joblisting.model.Listing;
 import com.example.joblisting.model.User;
 import com.example.joblisting.response.ListingResponse;
+import com.example.joblisting.response.UpdateListingResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,6 +31,20 @@ public class ListingMapper {
                 listing.getCompany()
         );
     }
+
+    public UpdateListingResponse fromListingToUpdateListingResponse(Listing listing) {
+
+        return new UpdateListingResponse(
+          listing.getTitle(),
+          listing.getDescription(),
+          listing.getLocation(),
+          listing.getTags(),
+                listing.getCompany()
+        );
+    }
+
+
+
 
 
 }

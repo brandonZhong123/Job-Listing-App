@@ -2,6 +2,7 @@ package com.example.joblisting.service;
 
 import com.example.joblisting.dto.listing.GetListingDto;
 import com.example.joblisting.dto.listing.PostListingDto;
+import com.example.joblisting.dto.listing.UpdateListingDto;
 import com.example.joblisting.model.Listing;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -15,4 +16,6 @@ public interface ListingService {
     List<Listing> listListings();
 
     Listing singleListing(Long id);
+
+    Listing updateListing(Long id, UpdateListingDto dto);
 }
