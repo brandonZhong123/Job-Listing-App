@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
 function Listings() {
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -28,9 +28,19 @@ function Listings() {
         <div className="min-h-screen bg-gray-50">
             <main className="max-w-4xl mx-auto px-6 py-10">
 
-                <h1 className="text-3xl font-bold mb-8">
-                    Job Listings
-                </h1>
+                <div className="flex items-center justify-between mb-8">
+                    <h1 className="text-3xl font-bold">
+                        Job Listings
+                    </h1>
+
+                    <Link
+                        to="/listings/post"
+                        className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+                    >
+                        + Post Listing
+                    </Link>
+                </div>
+
 
                 <div className="flex flex-col gap-4">
 
