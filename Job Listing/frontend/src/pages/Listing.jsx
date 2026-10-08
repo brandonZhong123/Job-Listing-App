@@ -4,7 +4,6 @@ function Listings() {
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
 
-
     useEffect(() => {
         const token = localStorage.getItem("token");
 

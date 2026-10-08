@@ -61,6 +61,15 @@ public class ListingController {
         return ResponseEntity.ok(res);
     }
 
+    @DeleteMapping("/{listingId}")
+    public ResponseEntity<Void> deleteListing(
+            @PathVariable Long listingId
+    ) {
+        listingService.deleteListing(listingId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+    }
+
 
 
 }

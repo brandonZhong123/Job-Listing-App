@@ -49,7 +49,8 @@ public class ListingServiceImpl implements ListingService {
 
     @Override
     public Listing updateListing(Long id, UpdateListingDto dto) {
-        Listing listing = listingRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        Listing listing = listingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Listing not found"));
         listing.setCompany(dto.company());
         listing.setTags(dto.tags());
         listing.setTitle(dto.title());
@@ -57,4 +58,12 @@ public class ListingServiceImpl implements ListingService {
         listing.setLocation(dto.location());
         return listingRepository.save(listing);
     }
+
+    @Override
+    public void deleteListing(Long id) {
+        Listing listing = listingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Listing not found"));
+        listingRepository.delete(listing);
+    }
+
 }

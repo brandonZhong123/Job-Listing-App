@@ -4,6 +4,7 @@ import Login from "./authentication/Login";
 import Register from "./authentication/Register"
 import Verify from "./authentication/Verify";
 import Listings from "./pages/Listing";
+import PostListing from "./pages/PostListing";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
@@ -43,7 +44,7 @@ function App() {
                     element={<Verify />}
                 />
 
-                {/* Protected page */}
+                {/* Protected pages */}
                 <Route
                     path="/listings"
                     element={
@@ -52,6 +53,16 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
+
+                <Route
+                    path="/listings/post"
+                    element={
+                        <ProtectedRoute>
+                            <PostListing />
+                        </ProtectedRoute>
+                    }
+                />
+
 
             </Routes>
         </BrowserRouter>
