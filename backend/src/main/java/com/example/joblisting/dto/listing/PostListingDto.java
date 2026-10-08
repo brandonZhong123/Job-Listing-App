@@ -6,7 +6,7 @@ public record PostListingDto(
         String title,
         String description,
         String location,
-        List<String> tags,
+        List<String>     tags,
         String company
 
 ) {

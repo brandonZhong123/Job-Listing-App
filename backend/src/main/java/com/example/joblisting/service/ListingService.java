@@ -18,4 +18,6 @@ public interface ListingService {
     Listing singleListing(Long id);
 
     Listing updateListing(Long id, UpdateListingDto dto);
+
+    void deleteListing(Long id);
 }
