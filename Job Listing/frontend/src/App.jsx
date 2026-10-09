@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Login from "./authentication/Login";
-import Register from "./authentication/Register"
-import Verify from "./authentication/Verify";
-import Listings from "./pages/Listing";
-import PostListing from "./pages/PostListing";
+import Login from "./pages/authentication/Login";
+import Register from "./pages/authentication/Register"
+import Verify from "./pages/authentication/Verify";
+import Listings from "./pages/listing/Listing";
+import PostListing from "./pages/listing/PostListing";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
