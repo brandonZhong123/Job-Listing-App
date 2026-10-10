@@ -40,8 +40,18 @@ public class ListingController {
 
     @GetMapping
     public ResponseEntity<List<ListingResponse>> getListings() {
-        List<Listing> lists = listingService.listListings();
-        List<ListingResponse> listingResponses = lists.stream().map(listingMapper::fromListing).toList();
+        List<Listing> listings = listingService.listListings();
+        List<ListingResponse> listingResponses = listings.stream().map(listingMapper::fromListing).toList();
+        return ResponseEntity.ok(listingResponses);
+    }
+
+    @GetMapping("/personal")
+    public ResponseEntity<List<ListingResponse>> getUserListings(@AuthenticationPrincipal User user) {
+        String email = user.getEmail();
+        List<Listing> listings = listingService.getUserListings(email);
+        List<ListingResponse> listingResponses = listings.stream()
+                .map(listingMapper::fromListing)
+                .toList();
         return ResponseEntity.ok(listingResponses);
     }
 

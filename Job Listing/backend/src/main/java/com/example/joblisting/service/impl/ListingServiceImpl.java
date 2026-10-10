@@ -40,6 +40,13 @@ public class ListingServiceImpl implements ListingService {
         return listingRepository.findAllByOrderByCreatedAsc();
     }
 
+    @Override
+    public List<Listing> getUserListings(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return listingRepository.findAllByUserId(user.getId());
+    }
+
 
     @Override
     public Listing singleListing(Long id) {
