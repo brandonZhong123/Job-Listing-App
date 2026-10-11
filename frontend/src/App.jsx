@@ -5,6 +5,7 @@ import Register from "./pages/authentication/Register"
 import Verify from "./pages/authentication/Verify";
 import Listings from "./pages/listing/Listing";
 import PostListing from "./pages/listing/PostListing";
+import MyListings from "./pages/listing/MyListing";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
@@ -59,6 +60,15 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <PostListing />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/listings/personal"
+                    element={
+                        <ProtectedRoute>
+                            <MyListings />
                         </ProtectedRoute>
                     }
                 />
