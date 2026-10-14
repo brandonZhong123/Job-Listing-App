@@ -14,7 +14,7 @@ public interface ListingService {
 
     Listing createListing(PostListingDto dto, String email);
 
-    List<Listing> listListings();
+    List<Listing> listListings(String search);
 
     List<Listing> getUserListings(String email);
 

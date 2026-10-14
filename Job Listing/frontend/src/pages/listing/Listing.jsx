@@ -3,27 +3,43 @@ import { Link } from "react-router-dom";
 function Listings() {
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState("");
+    const [keyword, setKeyword] = useState("");
+    const [error, setError] = useState("");
 
     useEffect(() => {
         const token = localStorage.getItem("token");
+        const controller = new AbortController();
 
-        fetch("http://localhost:8080/listing", {
+        fetch(`http://localhost:8080/listing?search=${encodeURIComponent(keyword)}`, {
+            signal: controller.signal,
             headers: {
                 Authorization: `Bearer ${token}`
             }
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error("Could not load listings. Please try again.");
+                return response.json();
+            })
             .then(data => {
                 setListings(data);
-            }).finally(setLoading(false));
-    }, []);
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
-            </div>
-        );
-    }
+            })
+            .catch(error => {
+                if (!controller.signal.aborted) setError(error.message);
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) setLoading(false);
+            });
+        return () => controller.abort();
+    }, [keyword]);
+
+    const handleSearch = (event) => {
+        event.preventDefault();
+        if (search.trim() === keyword) return;
+        setLoading(true);
+        setError("");
+        setKeyword(search.trim());
+    };
     return (
         <div className="min-h-screen bg-gray-50">
             <main className="max-w-4xl mx-auto px-6 py-10">
@@ -42,9 +58,28 @@ function Listings() {
                 </div>
 
 
-                <div className="flex flex-col gap-4">
+                <form onSubmit={handleSearch} role="search" className="flex gap-2 mb-8">
+                    <input
+                        type="search"
+                        aria-label="Search jobs by title or company"
+                        placeholder="Search by job title or company"
+                        value={search}
+                        onChange={(event) => setSearch(event.target.value)}
+                        className="min-w-0 flex-1 bg-white border rounded-lg px-4 py-2"
+                    />
+                    <button type="submit" className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
+                        Search
+                    </button>
+                </form>
 
-                    {listings.map((listing) => (
+                <div className="flex flex-col gap-4" aria-live="polite" aria-busy={loading}>
+                    {loading && <p className="text-gray-600">Loading listings...</p>}
+                    {error && <p role="alert" className="text-red-600">{error}</p>}
+                    {!loading && !error && listings.length === 0 && (
+                        <p className="text-gray-600">{keyword ? "No jobs match your search." : "No listings yet."}</p>
+                    )}
+
+                    {!loading && !error && listings.map((listing) => (
                         <div
                             key={listing.id}
                             className="bg-white border rounded-xl p-6 hover:shadow-md transition"

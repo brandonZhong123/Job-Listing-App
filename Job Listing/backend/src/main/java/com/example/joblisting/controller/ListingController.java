@@ -39,8 +39,8 @@ public class ListingController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ListingResponse>> getListings() {
-        List<Listing> listings = listingService.listListings();
+    public ResponseEntity<List<ListingResponse>> getListings(@RequestParam(name = "search", required = false) String search) {
+        List<Listing> listings = listingService.listListings(search);
         List<ListingResponse> listingResponses = listings.stream().map(listingMapper::fromListing).toList();
         return ResponseEntity.ok(listingResponses);
     }
@@ -74,7 +74,7 @@ public class ListingController {
 
     @DeleteMapping("/{listingId}")
     public ResponseEntity<Void> deleteListing(
-            @PathVariable Long listingId, 
+            @PathVariable Long listingId,
             @AuthenticationPrincipal User user
     ) {
         listingService.deleteListing(listingId, user);

@@ -8,4 +8,6 @@ import java.util.List;
 public interface ListingRepository extends CrudRepository<Listing, Long> {
     List<Listing> findAllByOrderByCreatedAsc();
     List<Listing> findAllByUserId(Long userId);
+    List<Listing> findByTitleIgnoreCase(String title);
+    List<Listing> findByTitleContainingIgnoreCaseOrCompanyContainingIgnoreCaseOrderByCreatedAsc(String title, String company);
 }
