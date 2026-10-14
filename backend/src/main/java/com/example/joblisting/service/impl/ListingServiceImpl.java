@@ -37,7 +37,11 @@ public class ListingServiceImpl implements ListingService {
     }
 
     @Override
-    public List<Listing> listListings() {
+    public List<Listing> listListings(String search) {
+        if (search != null && !search.isBlank()) {
+            String keyword = search.trim();
+            return listingRepository.findByTitleContainingIgnoreCaseOrCompanyContainingIgnoreCaseOrderByCreatedAsc(keyword, keyword);
+        }
         return listingRepository.findAllByOrderByCreatedAsc();
     }
 
