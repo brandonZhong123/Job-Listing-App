@@ -10,6 +10,7 @@ import com.example.joblisting.repository.UserRepository;
 import com.example.joblisting.service.ListingService;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
@@ -55,21 +56,29 @@ public class ListingServiceImpl implements ListingService {
 
 
     @Override
-    public Listing updateListing(Long id, UpdateListingDto dto) {
+    public Listing updateListing(Long id, UpdateListingDto dto, User user) {
         Listing listing = listingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Listing not found"));
+
+        if (!listing.getUser().getEmail().equals(user.getEmail())) {
+            throw new RuntimeException("You do not have permission to edit this listing");
+        }
         listing.setCompany(dto.company());
         listing.setTags(dto.tags());
         listing.setTitle(dto.title());
-        listing.setDescription(dto.title());
+        listing.setDescription(dto.description());
         listing.setLocation(dto.location());
         return listingRepository.save(listing);
     }
 
     @Override
-    public void deleteListing(Long id) {
+    public void deleteListing(Long id, User user) {
         Listing listing = listingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Listing not found"));
+
+        if (!listing.getUser().getEmail().equals(user.getEmail())) {
+            throw new RuntimeException("You do not have permission to delete this listing");
+        }
         listingRepository.delete(listing);
     }
 
