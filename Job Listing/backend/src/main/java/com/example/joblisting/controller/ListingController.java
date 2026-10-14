@@ -65,17 +65,19 @@ public class ListingController {
     @PutMapping("/{listingId}")
     public ResponseEntity<UpdateListingResponse> updateListing(
             @PathVariable Long listingId,
+            @AuthenticationPrincipal User user,
             @RequestBody UpdateListingDto dto) {
-        Listing listing = listingService.updateListing(listingId, dto);
+        Listing listing = listingService.updateListing(listingId, dto, user);
         UpdateListingResponse res = listingMapper.fromListingToUpdateListingResponse(listing);
         return ResponseEntity.ok(res);
     }
 
     @DeleteMapping("/{listingId}")
     public ResponseEntity<Void> deleteListing(
-            @PathVariable Long listingId
+            @PathVariable Long listingId, 
+            @AuthenticationPrincipal User user
     ) {
-        listingService.deleteListing(listingId);
+        listingService.deleteListing(listingId, user);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }

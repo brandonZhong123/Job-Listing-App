@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 // Don't Forget
 @Table(name = "users")
-public class User implements UserDetails {
+public class User implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
