@@ -1,122 +1,72 @@
+import { apiFetch } from "../../helpers/api";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-function Listings() {
-    const [listings, setListings] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [search, setSearch] = useState("");
-    const [keyword, setKeyword] = useState("");
-    const [error, setError] = useState("");
+import { Link, useParams } from "react-router-dom";
+
+function Listing() {
+    const { listingId } = useParams();
+    const [result, setResult] = useState(null);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
         const controller = new AbortController();
 
-        fetch(`http://localhost:8080/listing?search=${encodeURIComponent(keyword)}`, {
-            signal: controller.signal,
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+        apiFetch(`http://localhost:8080/listing/${encodeURIComponent(listingId)}`, {
+            signal: controller.signal
         })
             .then(response => {
-                if (!response.ok) throw new Error("Could not load listings. Please try again.");
+                if (response.status === 404) throw new Error("This listing could not be found.");
+                if (!response.ok) throw new Error("Could not load this listing. Please try again later.");
                 return response.json();
             })
-            .then(data => {
-                setListings(data);
+            .then(listing => {
+                if (!controller.signal.aborted) setResult({ id: listingId, listing });
             })
             .catch(error => {
-                if (!controller.signal.aborted) setError(error.message);
-            })
-            .finally(() => {
-                if (!controller.signal.aborted) setLoading(false);
+                if (!controller.signal.aborted) setResult({ id: listingId, error: error.message });
             });
+
         return () => controller.abort();
-    }, [keyword]);
+    }, [listingId]);
 
-    const handleSearch = (event) => {
-        event.preventDefault();
-        if (search.trim() === keyword) return;
-        setLoading(true);
-        setError("");
-        setKeyword(search.trim());
-    };
+    const loading = result?.id !== listingId;
+    const listing = !loading && result.listing;
+
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-[calc(100vh-80px)] bg-gray-50">
             <main className="max-w-4xl mx-auto px-6 py-10">
+                <Link to="/listings" className="inline-block text-blue-600 hover:underline mb-6">
+                    &larr; Back to listings
+                </Link>
 
-                <div className="flex items-center justify-between mb-8">
-                    <h1 className="text-3xl font-bold">
-                        Job Listings
-                    </h1>
-
-                    <Link
-                        to="/listings/post"
-                        className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
-                    >
-                        + Post Listing
-                    </Link>
-                </div>
-
-
-                <form onSubmit={handleSearch} role="search" className="flex gap-2 mb-8">
-                    <input
-                        type="search"
-                        aria-label="Search jobs by title or company"
-                        placeholder="Search by job title or company"
-                        value={search}
-                        onChange={(event) => setSearch(event.target.value)}
-                        className="min-w-0 flex-1 bg-white border rounded-lg px-4 py-2"
-                    />
-                    <button type="submit" className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
-                        Search
-                    </button>
-                </form>
-
-                <div className="flex flex-col gap-4" aria-live="polite" aria-busy={loading}>
-                    {loading && <p className="text-gray-600">Loading listings...</p>}
-                    {error && <p role="alert" className="text-red-600">{error}</p>}
-                    {!loading && !error && listings.length === 0 && (
-                        <p className="text-gray-600">{keyword ? "No jobs match your search." : "No listings yet."}</p>
+                <div aria-live="polite" aria-busy={loading}>
+                    {loading && <p className="text-gray-600">Loading listing...</p>}
+                    {!loading && result.error && (
+                        <p role="alert" className="text-red-600">{result.error}</p>
                     )}
-
-                    {!loading && !error && listings.map((listing) => (
-                        <div
-                            key={listing.id}
-                            className="bg-white border rounded-xl p-6 hover:shadow-md transition"
-                        >
-                            <h2 className="text-xl font-semibold">
-                                {listing.title}
-                            </h2>
-
-                            <p className="text-gray-600 mt-1">
-                                {listing.company}
-                            </p>
-
-                            <p className="text-sm text-gray-500 mt-2">
-                                {listing.location}
-                            </p>
-
-                            <p className="text-gray-600 mt-4">
-                                {listing.description}
-                            </p>
-
-                            <div className="flex gap-2 mt-4">
-                                {listing.tags?.map((tag) => (
-                                    <span
-                                        key={tag}
-                                        className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
-                                    >
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-
+                    {listing && (
+                        <article className="bg-white border rounded-xl p-6 sm:p-8 break-words">
+                            <header className="border-b border-gray-200 pb-6 mb-6">
+                                <h1 className="text-3xl font-bold">{listing.title}</h1>
+                                <p className="text-lg text-gray-600 mt-2">{listing.company}</p>
+                                <p className="text-sm text-gray-500 mt-2">{listing.location}</p>
+                                {listing.tags?.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mt-4">
+                                        {listing.tags.map(tag => (
+                                            <span key={tag} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+                            </header>
+                            <h2 className="text-xl font-semibold mb-3">Job description</h2>
+                            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{listing.description}</p>
+                        </article>
+                    )}
                 </div>
             </main>
         </div>
     );
 }
 
-export default Listings;
+export default Listing;
+

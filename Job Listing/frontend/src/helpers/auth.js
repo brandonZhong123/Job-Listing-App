@@ -14,7 +14,7 @@ export function isTokenValid() {
 
         const payload = JSON.parse(atob(base64));
 
-        if (payload.exp * 1000 < Date.now()) {
+        if (!Number.isFinite(payload.exp) || payload.exp * 1000 <= Date.now()) {
             localStorage.removeItem("token");
             return false;
         }

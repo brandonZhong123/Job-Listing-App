@@ -1,4 +1,5 @@
-﻿import { useEffect, useState } from "react";
+import { apiFetch } from "../../helpers/api";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function MyListings() {
@@ -15,25 +16,29 @@ function MyListings() {
     });
     const [editTagInput, setEditTagInput] = useState("");
     const [savingId, setSavingId] = useState(null);
-
-    const authHeaders = (customHeaders = {}) => {
-        const token = localStorage.getItem("token");
-
-        return {
-            Authorization: "Bearer " + token,
-            ...customHeaders
-        };
-    };
+    const [deletingId, setDeletingId] = useState(null);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
 
     useEffect(() => {
-        fetch("http://localhost:8080/listing/personal", {
-            headers: authHeaders()
+        const controller = new AbortController();
+        apiFetch("http://localhost:8080/listing/personal", {
+            signal: controller.signal
         })
-            .then((response) => response.json())
-            .then((data) => {
-                setListings(data);
+            .then((response) => {
+                if (!response.ok) throw new Error("Could not load your listings. Please try again later.");
+                return response.json();
             })
-            .finally(() => setLoading(false));
+            .then((data) => {
+                if (!controller.signal.aborted) setListings(data);
+            })
+            .catch(error => {
+                if (!controller.signal.aborted) setError(error.message);
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) setLoading(false);
+            });
+        return () => controller.abort();
     }, []);
 
     const startEdit = (listing) => {
@@ -55,9 +60,11 @@ function MyListings() {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/listing/${listingId}`, {
-                method: "DELETE",
-                headers: authHeaders()
+            setDeletingId(listingId);
+            setError("");
+            setSuccess("");
+            const response = await apiFetch(`http://localhost:8080/listing/${listingId}`, {
+                method: "DELETE"
             });
 
             if (!response.ok) {
@@ -68,18 +75,23 @@ function MyListings() {
                 currentListings.filter((listing) => listing.id !== listingId)
             );
             setOpenMenuId(null);
+            setSuccess("Listing deleted successfully.");
         } catch (error) {
-            alert(error.message || "Could not delete this listing.");
+            setError(error.message || "Could not delete this listing.");
+        } finally {
+            setDeletingId(null);
         }
     };
 
     const handleEditSubmit = async (listingId) => {
         try {
             setSavingId(listingId);
+            setError("");
+            setSuccess("");
 
-            const response = await fetch(`http://localhost:8080/listing/${listingId}`, {
+            const response = await apiFetch(`http://localhost:8080/listing/${listingId}`, {
                 method: "PUT",
-                headers: authHeaders({ "Content-Type": "application/json" }),
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(editDraft)
             });
 
@@ -95,6 +107,7 @@ function MyListings() {
                 )
             );
             setEditingId(null);
+            setSuccess("Listing updated successfully.");
             setEditDraft({
                 title: "",
                 description: "",
@@ -103,7 +116,7 @@ function MyListings() {
                 tags: []
             });
         } catch (error) {
-            alert(error.message || "Could not update this listing.");
+            setError(error.message || "Could not update this listing.");
         } finally {
             setSavingId(null);
         }
@@ -138,28 +151,24 @@ function MyListings() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+            <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-gray-50">
+                <p role="status" className="text-gray-600">Loading your listings...</p>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-[calc(100vh-80px)] bg-gray-50">
             <main className="max-w-4xl mx-auto px-6 py-10">
                 <div className="flex items-center justify-between mb-8">
                     <h1 className="text-3xl font-bold">
                         My Listings
                     </h1>
-
-                    <Link
-                        to="/listings/post"
-                        className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
-                    >
-                        + Post Listing
-                    </Link>
                 </div>
 
+                {error && <p role="alert" className="text-red-600 mb-4">{error}</p>}
+                {success && <p role="status" className="text-green-700 mb-4">{success}</p>}
+                {!error && listings.length === 0 && <p className="text-gray-600">You haven't posted any listings yet.</p>}
                 <div className="flex flex-col gap-4">
                     {listings.map((listing) => (
                         <div
@@ -169,7 +178,9 @@ function MyListings() {
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1">
                                     <h2 className="text-xl font-semibold">
-                                        {listing.title}
+                                        <Link to={`/listings/${listing.id}`} className="hover:text-blue-600 hover:underline">
+                                            {listing.title}
+                                        </Link>
                                     </h2>
 
                                     <p className="text-gray-600 mt-1">
@@ -223,8 +234,9 @@ function MyListings() {
                                                 type="button"
                                                 className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                                                 onClick={() => handleDelete(listing.id)}
+                                                disabled={deletingId !== null}
                                             >
-                                                Delete
+                                                {deletingId === listing.id ? "Deleting..." : "Delete"}
                                             </button>
                                         </div>
                                     )}
@@ -343,3 +355,5 @@ function MyListings() {
 }
 
 export default MyListings;
+
+
