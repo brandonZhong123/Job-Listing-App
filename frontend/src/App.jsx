@@ -3,7 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/authentication/Login";
 import Register from "./pages/authentication/Register"
 import Verify from "./pages/authentication/Verify";
-import Listings from "./pages/listing/Listing";
+import Listings from "./pages/listing/Listings";
+import Listing from "./pages/listing/Listing";
 import PostListing from "./pages/listing/PostListing";
 import MyListings from "./pages/listing/MyListing";
 
@@ -51,6 +52,15 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <Listings />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/listings/:listingId"
+                    element={
+                        <ProtectedRoute>
+                            <Listing />
                         </ProtectedRoute>
                     }
                 />

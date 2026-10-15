@@ -9,6 +9,8 @@ import com.example.joblisting.repository.ListingRepository;
 import com.example.joblisting.repository.UserRepository;
 import com.example.joblisting.service.ListingService;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -55,7 +57,8 @@ public class ListingServiceImpl implements ListingService {
 
     @Override
     public Listing singleListing(Long id) {
-        return listingRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        return listingRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Listing not found"));
     }
 
 

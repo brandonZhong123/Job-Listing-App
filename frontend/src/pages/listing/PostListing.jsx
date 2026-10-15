@@ -1,3 +1,4 @@
+import { apiFetch } from "../../helpers/api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -20,14 +21,11 @@ function PostListing() {
         setError("");
         setLoading(true);
 
-        const token = localStorage.getItem("token");
-
         try {
-            const res = await fetch("http://localhost:8080/listing/post", {
+            const res = await apiFetch("http://localhost:8080/listing/post", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     title,
@@ -39,14 +37,13 @@ function PostListing() {
             });
 
             if (!res.ok) {
-                const errorMessage = await res.text();
-                setError(errorMessage || "Posting failed");
+                setError("Could not post your listing. Check the fields and try again.");
                 return;
             }
 
-            navigate("/listings");
+            navigate("/listings", { state: { success: "Listing posted successfully." } });
 
-        } catch (err) {
+        } catch {
             setError("Could not connect to server");
         } finally {
             setLoading(false);
@@ -54,10 +51,10 @@ function PostListing() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-gray-50">
             <form
                 onSubmit={handleSubmit}
-                className="w-96 bg-white border rounded-xl p-6 flex flex-col gap-4"
+                className="w-full max-w-sm m-6 bg-white border rounded-xl p-6 flex flex-col gap-4"
             >
                 <h1 className="text-3xl font-bold">
                     Post Listing
@@ -142,7 +139,7 @@ function PostListing() {
                 />
 
                 {error && (
-                    <p className="text-red-500">
+                    <p role="alert" className="text-red-500">
                         {error}
                     </p>
                 )}
